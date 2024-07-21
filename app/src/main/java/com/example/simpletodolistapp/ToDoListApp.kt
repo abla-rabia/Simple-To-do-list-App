@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonColors
@@ -29,6 +30,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -48,7 +50,7 @@ import com.example.simpletodolistapp.ui.theme.poppinsFontFamily
 
 data class toDo(
     val name:String,
-    var done:Boolean=false
+    val done: MutableState<Boolean> = mutableStateOf(false)
 )
 @Composable
 fun ToDoListApp(){
@@ -90,10 +92,11 @@ fun ToDoListApp(){
                 onDismissRequest = { showAlert.value=false },
                 confirmButton = {
                 Button(onClick = {
+                    if (addTodoName.isNotBlank()){
                     showAlert.value = false
                     toDos.value = toDos.value + toDo(addTodoName)
                     addTodoName = ""
-                    },
+                    }},
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(0xFF800080), // Background color
                         contentColor = Color.White // Text color
@@ -142,8 +145,8 @@ fun ToDo(todo:toDo,onDeleteClick:()->Unit){
             )
         {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                RadioButton(
-                    selected = todo.done, onClick = { todo.done=!todo.done})
+                Checkbox(
+                    checked = todo.done.value, onCheckedChange = { todo.done.value=!todo.done.value})
                 Text(text = todo.name, style = TextStyle(
                     fontSize = 16.sp,
                     fontFamily = poppinsFontFamily))
